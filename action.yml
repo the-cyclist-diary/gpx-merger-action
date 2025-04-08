@@ -1,6 +1,9 @@
 name: 'GPX merger Action'
 description: 'Merge GPX files reccursively'
 inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
   content-path:
     description: 'The folder where your GPX files can be found'
     required: false
@@ -49,7 +52,7 @@ runs:
       uses: jbangdev/setup-jbang@main
     - name: Run the action
       id: action
-      run: jbang --java 21 --fresh --repos 'quarkus-github-action=https://maven.pkg.github.com/the-cyclist-diary/gpx-merger-action/' --repos 'mavencentral' com.github.thecyclistdiary:gpx-merger-action:1.0.0-SNAPSHOT
+      run: jbang --java 21 --fresh --verbose --repos 'quarkus-github-action=https://maven.pkg.github.com/the-cyclist-diary/gpx-merger-action/' --repos 'mavencentral' com.github.thecyclistdiary:gpx-merger-action:1.0.0-SNAPSHOT
       shell: bash
       env:
         JSON_INPUTS: ${{ toJSON(inputs) }}
