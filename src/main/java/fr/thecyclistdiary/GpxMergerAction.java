@@ -36,6 +36,7 @@ public class GpxMergerAction {
             Repository repository = git.getRepository();
             System.out.printf("Starting analysis of content folder %s%n", completeExecutionFolder);
             Set<String> modifiedGpxFiles = GitHelper.getModifiedGpxList(git, repository);
+            System.out.printf("Modified gpx files : %s%n", modifiedGpxFiles);
             GpxToMapWalker gpxToMapWalker = new GpxToMapWalker(modifiedGpxFiles);
             Files.walkFileTree(completeExecutionFolder, gpxToMapWalker);
             System.out.println("Done analysis of content folder");

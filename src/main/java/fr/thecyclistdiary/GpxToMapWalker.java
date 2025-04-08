@@ -6,24 +6,32 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class GpxToMapWalker extends SimpleFileVisitor<Path> {
     public static final String GPX_EXTENSION = ".gpx";
     private final Set<String> modifiedGpxFiles;
+    private final Set<Path> modifiedFolders = new HashSet<>();
 
     public GpxToMapWalker(Set<String> modifiedGpxFiles) {
         this.modifiedGpxFiles = modifiedGpxFiles;
     }
 
     @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+        if (modifiedGpxFiles.contains(file.getFileName().toString())) {
+            System.out.printf("The GPX file %s is new or as been modified during last commit, its parent will be updated", file);
+            modifiedFolders.add(file.getParent());
+        }
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        System.out.printf("Done visiting directory %s%n", dir.getFileName());
         updateDirWithSubDirsData(dir);
+        System.out.printf("Done visiting directory %s%n", dir.getFileName());
         return super.postVisitDirectory(dir, exc);
     }
 
@@ -31,7 +39,7 @@ public class GpxToMapWalker extends SimpleFileVisitor<Path> {
         try (Stream<Path> subFolders = Files.list(dir)) {
             List<Path> subFoldersList = subFolders.toList();
             Optional<Path> hasAnyModifiedSubfolder = subFoldersList.stream()
-                    .filter(sf -> modifiedGpxFiles.contains(sf.toString()))
+                    .filter(modifiedFolders::contains)
                     .findAny();
             if (hasAnyModifiedSubfolder.isPresent()) {
                 System.out.printf("Some GPX files were update in the folder %s, the merged gpx will be regenerated%n", dir);

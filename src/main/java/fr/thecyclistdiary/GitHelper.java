@@ -52,7 +52,7 @@ public class GitHelper {
         try {
             gitInstance.add().addFilepattern(".").call();
             System.out.println("Modifications indexed");
-            String commitMessage = String.format("deploy: auto-generated map images - %s", LocalDateTime.now());
+            String commitMessage = String.format("deploy: auto-generated merged GPX - %s", LocalDateTime.now());
             gitInstance.commit()
                     .setMessage(commitMessage)
                     .setAuthor("GPX-to-map Bot", "ivan.bethus@gmail.com")
