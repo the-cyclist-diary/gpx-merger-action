@@ -1,8 +1,20 @@
 name: 'GPX merger Action'
 description: 'Merge GPX files reccursively'
 inputs:
-  github-token:
-    description: 'GitHub token'
+  content-path:
+    description: 'The folder where your GPX files can be found'
+    required: false
+    default: 'content/'
+  git-path:
+    description: 'The remote address of the repository'
+    required: false
+    default: ${{ github.server_url }}/${{ github.repository }}.git
+  username:
+    description: 'Your github username'
+    required: false
+    default: ${{github.repository_owner}}
+  user-token:
+    description: 'Your connection token to github'
     required: true
   action:
     description: 'Name of the action (if named)'
