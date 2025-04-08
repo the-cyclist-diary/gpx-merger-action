@@ -22,7 +22,7 @@ public class GpxToMapWalker extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
         if (modifiedGpxFiles.contains(file.getFileName().toString())) {
-            System.out.printf("The GPX file %s is new or as been modified during last commit, its parent will be updated", file);
+            System.out.printf("The GPX file %s is new or as been modified during last commit, its parent will be updated%n", file);
             modifiedFolders.add(file.getParent());
         }
         return FileVisitResult.CONTINUE;
