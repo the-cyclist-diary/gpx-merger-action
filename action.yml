@@ -49,7 +49,7 @@ runs:
       uses: jbangdev/setup-jbang@main
     - name: Run the action
       id: action
-      run: jbang --java 21 --fresh --repos 'quarkus-github-action=https://maven.pkg.github.com/the-cyclist-diary/gpx-merger-action/' --repos 'mavencentral' fr.thecyclistdiary:gpx-merger-action:1.0.1
+      run: jbang --java 21 --fresh --repos 'quarkus-github-action=https://maven.pkg.github.com/the-cyclist-diary/gpx-merger-action/' --repos 'mavencentral' com.github.thecyclistdiary:gpx-merger-action:1.0.2-SNAPSHOT
       shell: bash
       env:
         JSON_INPUTS: ${{ toJSON(inputs) }}
