@@ -1,5 +1,6 @@
 package fr.thecyclistdiary;
 
+import io.quarkus.logging.Log;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -9,8 +10,6 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -19,8 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 public class GitHelper {
-    public static final Logger LOGGER = LoggerFactory.getLogger(GitHelper.class);
-
     public static Set<String> getModifiedGpxList(Git gitInstance, Repository repository) {
         Set<String> modifiedGpxFiles = new HashSet<>();
         try {
@@ -55,17 +52,17 @@ public class GitHelper {
     public static void commitChanges(Git gitInstance, String username, String githubToken) {
         try {
             gitInstance.add().addFilepattern(".").call();
-            LOGGER.info("Modifications indexed");
+            Log.info("Modifications indexed");
             String commitMessage = String.format("deploy: auto-generated map images - %s", LocalDateTime.now());
             gitInstance.commit()
                     .setMessage(commitMessage)
                     .setAuthor("GPX-to-map Bot", "ivan.bethus@gmail.com")
                     .call();
-            LOGGER.info("Modifications committed");
+            Log.info("Modifications committed");
             gitInstance.push()
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, githubToken))
                     .call();
-            LOGGER.info("Modifications pushed - Commit message : {}", commitMessage);
+            Log.info("Modifications pushed - Commit message : %s".formatted(commitMessage));
         } catch (GitAPIException e) {
             throw new RuntimeException(e);
         }
