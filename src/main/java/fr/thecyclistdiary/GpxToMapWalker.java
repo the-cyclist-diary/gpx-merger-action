@@ -1,9 +1,5 @@
 package fr.thecyclistdiary;
 
-import io.quarkus.logging.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -26,7 +22,7 @@ public class GpxToMapWalker extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        Log.info("Done visiting directory %s".formatted(dir.getFileName()));
+        System.out.printf("Done visiting directory %s%n", dir.getFileName());
         updateDirWithSubDirsData(dir);
         return super.postVisitDirectory(dir, exc);
     }
@@ -38,12 +34,12 @@ public class GpxToMapWalker extends SimpleFileVisitor<Path> {
                     .filter(sf -> modifiedGpxFiles.contains(sf.toString()))
                     .findAny();
             if (hasAnyModifiedSubfolder.isPresent()) {
-                Log.info("Some GPX files were update in the folder %s, the merged gpx will be regenerated".formatted(dir));
+                System.out.printf("Some GPX files were update in the folder %s, the merged gpx will be regenerated%n", dir);
                 try (Stream<Path> files = Files.list(dir)) {
                     files.filter(f -> f.getFileName().endsWith(GPX_EXTENSION))
                             .findAny().ifPresent(gpx -> {
                                 try {
-                                    Log.info("Deleting old gpx file : %s".formatted(gpx.getFileName()));
+                                    System.out.printf("Deleting old gpx file : %s%n", gpx.getFileName());
                                     Files.delete(gpx);
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
@@ -52,7 +48,7 @@ public class GpxToMapWalker extends SimpleFileVisitor<Path> {
                 }
                 List<File> collectChildGpxFiles = collectChildGpxFiles(subFoldersList);
                 if (collectChildGpxFiles.isEmpty()) {
-                    Log.info("No GPX files could be collected in this folder's direct subfolders, skipping...");
+                    System.out.println("No GPX files could be collected in this folder's direct subfolders, skipping...");
                 } else {
                     GpxParser.concatGpxFiles(collectChildGpxFiles.stream(), dir);
                 }
@@ -73,7 +69,7 @@ public class GpxToMapWalker extends SimpleFileVisitor<Path> {
                         throw new RuntimeException(e);
                     }
                 });
-        Log.info("%d child GPX files were collected".formatted(gpxFiles.size()));
+        System.out.printf("%d child GPX files were collected%n", gpxFiles.size());
         return gpxFiles;
     }
 

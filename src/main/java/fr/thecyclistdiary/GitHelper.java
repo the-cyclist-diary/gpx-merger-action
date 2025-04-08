@@ -1,6 +1,5 @@
 package fr.thecyclistdiary;
 
-import io.quarkus.logging.Log;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -52,17 +51,17 @@ public class GitHelper {
     public static void commitChanges(Git gitInstance, String username, String githubToken) {
         try {
             gitInstance.add().addFilepattern(".").call();
-            Log.info("Modifications indexed");
+            System.out.println("Modifications indexed");
             String commitMessage = String.format("deploy: auto-generated map images - %s", LocalDateTime.now());
             gitInstance.commit()
                     .setMessage(commitMessage)
                     .setAuthor("GPX-to-map Bot", "ivan.bethus@gmail.com")
                     .call();
-            Log.info("Modifications committed");
+            System.out.println("Modifications committed");
             gitInstance.push()
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, githubToken))
                     .call();
-            Log.info("Modifications pushed - Commit message : %s".formatted(commitMessage));
+            System.out.printf("Modifications pushed - Commit message : %s%n", commitMessage);
         } catch (GitAPIException e) {
             throw new RuntimeException(e);
         }
