@@ -1,0 +1,9 @@
+name: 'GPX merger Action'
+description: 'Merge GPX files reccursively'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: false
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/the-cyclist-diary/gpx-merger-action:main'
